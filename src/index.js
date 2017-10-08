@@ -129,6 +129,7 @@ module.exports = class Reader extends Component {
         return navigator.mediaDevices.getUserMedia({
           video: {
             deviceId,
+            facingMode: facingMode === 'rear' ? 'environment' : 'user',
             width: { min: 360, ideal: 1280, max: 1920 },
             height: { min: 240, ideal: 720, max: 1080 },
           },
