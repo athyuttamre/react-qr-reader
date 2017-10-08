@@ -40,7 +40,7 @@ module.exports = function getDeviceId(facingMode, chooseDeviceId = defaultDevice
 
       // Filter out video devices without the pattern
       const filteredDevices = videoDevices.filter(({ label }) =>
-        pattern.test(label))
+        pattern.test(label.toLowerCase()))
 
       resolve(chooseDeviceId(filteredDevices, videoDevices, facingMode))
     })
