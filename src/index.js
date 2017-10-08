@@ -1,7 +1,6 @@
 const React = require('react')
 const { Component } = React
 const PropTypes = require('prop-types')
-const getDeviceId = require('./getDeviceId')
 const havePropsChanged = require('./havePropsChanged')
 
 // Require adapter to support older browser implementations
@@ -124,19 +123,19 @@ module.exports = class Reader extends Component {
   initiate(props = this.props) {
     const { onError, facingMode, chooseDeviceId } = props
 
-    getDeviceId(facingMode, chooseDeviceId)
-      .then(deviceId => {
-        return navigator.mediaDevices.getUserMedia({
-          video: {
-            deviceId,
-            facingMode: facingMode === 'rear' ? 'environment' : 'user',
-            width: { min: 360, ideal: 1280, max: 1920 },
-            height: { min: 240, ideal: 720, max: 1080 },
-          },
-        })
-      })
-      .then(this.handleVideo)
-      .catch(onError);
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      onError(new Error('navigator.mediaDevices.getUserMedia not supported.'));
+    }
+
+    navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: facingMode === 'rear' ? 'environment' : 'user',
+        width: { min: 360, ideal: 1280, max: 1920 },
+        height: { min: 240, ideal: 720, max: 1080 },
+      },
+    })
+    .then(this.handleVideo)
+    .catch(onError);
   }
   handleVideo(stream) {
     const { preview } = this.els
